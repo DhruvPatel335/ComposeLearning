@@ -115,6 +115,28 @@ class Screen {
             )
         )
         list.add(Category(R.drawable.baseline_person, "Chandler", "HR"))
+        list.add(Category(R.drawable.baseline_person, "John Doe", "Programmer"))
+        list.add(Category(R.drawable.baseline_person, "John Parker", "Dev Ops"))
+
+        list.add(
+            Category(
+                R.drawable.baseline_person,
+                "Samantha",
+                "Construction"
+            )
+        )
+        list.add(Category(R.drawable.baseline_person, "Chandler", "HR"))
+        list.add(Category(R.drawable.baseline_person, "John Doe", "Programmer"))
+        list.add(Category(R.drawable.baseline_person, "John Parker", "Dev Ops"))
+
+        list.add(
+            Category(
+                R.drawable.baseline_person,
+                "Samantha",
+                "Construction"
+            )
+        )
+        list.add(Category(R.drawable.baseline_person, "Chandler", "HR"))
         return list
     }
 
