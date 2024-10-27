@@ -28,8 +28,10 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +47,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,9 +57,104 @@ class MainActivity : ComponentActivity() {
 
         setContent {
 //            screen.PreviewItem()
-            Recomposable()
+//            Recomposable()
+//            Counter()
+//            LaunchEffectComposable()
+            CoroutineScopeComposable()
         }
     }
+}
+
+@Composable
+fun CoroutineScopeComposable(){
+    val counter = remember {
+        mutableStateOf(0)
+    }
+    var scope = rememberCoroutineScope()
+
+    var text = "Counter is running ${counter.value}"
+    if (counter.value==10){
+        text = "Counter stopped"
+    }
+    Column {
+        Text(text = text)
+        Button(onClick = {
+            scope.launch {
+                Log.d("LaunchedEffectComposable", "Started...")
+                try {
+                    for (i in 1..10){
+                        counter.value++
+                        delay(1000)
+                    }
+                }catch (e:Exception){
+                    Log.d("LaunchedEffectComposable", "Exception - ${e.message.toString()}")
+                }
+            }
+        }) {
+            Text(text = "Start")
+        }
+    }
+}
+
+@Composable
+fun LaunchEffectComposable(){
+    val counter = remember {
+        mutableStateOf(0)
+    }
+    LaunchedEffect(key1 = Unit) {
+        Log.d("LaunchedEffectComposable", "Started...")
+        try {
+            for (i in 1..10){
+                counter.value++
+                delay(1000)
+            }
+        }catch (e:Exception){
+            Log.d("LaunchedEffectComposable", "Exception - ${e.message.toString()}")
+        }
+    }
+
+    var text = "Counter is running ${counter.value}"
+    if (counter.value==10){
+        text = "Counter stopped"
+    }
+    Text(text = text)
+}
+
+//@Composable
+//fun Counter() {
+//    var count = remember {
+//        mutableStateOf(0)
+//    }
+//
+//    var key = count.value%3==0;
+//    LaunchedEffect(key1 = key) {
+//        Log.d("Counter", "Current Count: ${count.value}")
+//    }
+//    Button(onClick = { count.value++ }) {
+//        Text(text = "Counter Incrementer")
+//
+//    }
+//}
+
+// launched effect only runs one time and re runs when the value of unit has been changed.
+@Composable
+fun ListComposable() {
+    var categoryState = remember {
+        mutableStateOf(emptyList<String>())
+    }
+    LaunchedEffect(key1 = Unit) {
+        categoryState.value = fetchCategory();
+    }
+
+    LazyColumn {
+        items(categoryState.value) { item ->
+            Text(text = item)
+        }
+    }
+}
+
+fun fetchCategory(): List<String> {
+    return listOf("One", "two", "three")
 }
 
 @Preview(
@@ -190,13 +289,13 @@ fun CircularImage() {
 
 //Understanding recomposable in jetpack composes
 @Composable
-fun Recomposable(){
+fun Recomposable() {
     val state = remember {
         mutableStateOf(0.0)
     }
-    Log.d("Tagged","Called with initial composition")
-    Button(onClick = {state.value = Math.random() }) {
-        Log.d("Tagged","Logged with composition and recomposition")
+    Log.d("Tagged", "Called with initial composition")
+    Button(onClick = { state.value = Math.random() }) {
+        Log.d("Tagged", "Logged with composition and recomposition")
         Text(text = state.value.toString())
     }
 }
