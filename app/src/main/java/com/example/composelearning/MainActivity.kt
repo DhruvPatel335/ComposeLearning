@@ -2,6 +2,7 @@ package com.example.composelearning
 
 import android.os.Bundle
 import android.util.Log
+import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +30,7 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,12 +46,17 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -64,9 +72,48 @@ class MainActivity : ComponentActivity() {
 //            LaunchEffectComposable()
 //            CoroutineScopeComposable()
             App()
+
         }
     }
 }
+@Composable
+fun App(){
+    KeyboardComposable()
+    TextField(value = "", onValueChange ={} )
+}
+
+@Composable
+fun KeyboardComposable() {
+    val view = LocalView.current
+    DisposableEffect(key1 = Unit) {
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            val insets = ViewCompat.getRootWindowInsets(view)
+            val isKeyboardVisible = insets?.isVisible(WindowInsetsCompat.Type.ime())
+            Log.d("DisposableEffect", isKeyboardVisible.toString())
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+        onDispose {
+            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+        }
+    }
+}
+
+//@Composable
+//fun App() {
+//    var state = remember {
+//        mutableStateOf(false)
+//    }
+//    DisposableEffect(key1 = state.value) {
+//        Log.d("DisposableEffect", "disposable effect started")
+//        onDispose {
+//            Log.d("DisposableEffect", "clean up side effects")
+//        }
+//
+//    }
+//    Button(onClick = {state.value = !state.value}) {
+//        Text(text = "Change state")
+//    }
+//}
 
 fun a() {
     Log.d("Logs", "I am A from App")
@@ -76,14 +123,14 @@ fun b() {
     Log.d("Logs", "I am B from App")
 }
 
-@Composable
-fun App() {
-    var state = remember { mutableStateOf(::a) }
-    Button(onClick = { state.value = ::b }) {
-        Text(text = "Click to change state")
-    }
-    LandingScreen(state.value)
-}
+//@Composable
+//fun App() {
+//    var state = remember { mutableStateOf(::a) }
+//    Button(onClick = { state.value = ::b }) {
+//        Text(text = "Click to change state")
+//    }
+//    LandingScreen(state.value)
+//}
 
 
 @Composable
