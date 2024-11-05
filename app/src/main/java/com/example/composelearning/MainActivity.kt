@@ -14,12 +14,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -34,12 +37,14 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.RectangleShape
@@ -71,32 +76,55 @@ class MainActivity : ComponentActivity() {
 //            Counter()
 //            LaunchEffectComposable()
 //            CoroutineScopeComposable()
-            App()
-
+//            App()
+            Loader()
         }
     }
 }
-@Composable
-fun App(){
-    KeyboardComposable()
-    TextField(value = "", onValueChange ={} )
-}
 
 @Composable
-fun KeyboardComposable() {
-    val view = LocalView.current
-    DisposableEffect(key1 = Unit) {
-        val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            val insets = ViewCompat.getRootWindowInsets(view)
-            val isKeyboardVisible = insets?.isVisible(WindowInsetsCompat.Type.ime())
-            Log.d("DisposableEffect", isKeyboardVisible.toString())
-        }
-        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
-        onDispose {
-            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+fun Loader() {
+    val degree = produceState(initialValue = 0) {
+        while (true) {
+            delay(16)
+            value = (value + 10) % 360
         }
     }
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize(1f), content = {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Image(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = "",
+                modifier = Modifier
+                    .size(60.dp)
+                    .rotate(degree.value.toFloat())
+            )
+            Text(text = "Loading")
+        }
+    })
+
 }
+//@Composable
+//fun App(){
+//    KeyboardComposable()
+//    TextField(value = "", onValueChange ={} )
+//}
+
+//@Composable
+//fun KeyboardComposable() {
+//    val view = LocalView.current
+//    DisposableEffect(key1 = Unit) {
+//        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+//            val insets = ViewCompat.getRootWindowInsets(view)
+//            val isKeyboardVisible = insets?.isVisible(WindowInsetsCompat.Type.ime())
+//            Log.d("DisposableEffect", isKeyboardVisible.toString())
+//        }
+//        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+//        onDispose {
+//            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+//        }
+//    }
+//}
 
 //@Composable
 //fun App() {
