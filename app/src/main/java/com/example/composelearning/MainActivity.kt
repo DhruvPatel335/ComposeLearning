@@ -29,9 +29,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,61 +62,89 @@ class MainActivity : ComponentActivity() {
 //            Recomposable()
 //            Counter()
 //            LaunchEffectComposable()
-            CoroutineScopeComposable()
+//            CoroutineScopeComposable()
+            App()
         }
     }
 }
 
-@Composable
-fun CoroutineScopeComposable(){
-    val counter = remember {
-        mutableStateOf(0)
-    }
-    var scope = rememberCoroutineScope()
+fun a() {
+    Log.d("Logs", "I am A from App")
+}
 
-    var text = "Counter is running ${counter.value}"
-    if (counter.value==10){
-        text = "Counter stopped"
-    }
-    Column {
-        Text(text = text)
-        Button(onClick = {
-            scope.launch {
-                Log.d("LaunchedEffectComposable", "Started...")
-                try {
-                    for (i in 1..10){
-                        counter.value++
-                        delay(1000)
-                    }
-                }catch (e:Exception){
-                    Log.d("LaunchedEffectComposable", "Exception - ${e.message.toString()}")
-                }
-            }
-        }) {
-            Text(text = "Start")
-        }
-    }
+fun b() {
+    Log.d("Logs", "I am B from App")
 }
 
 @Composable
-fun LaunchEffectComposable(){
+fun App() {
+    var state = remember { mutableStateOf(::a) }
+    Button(onClick = { state.value = ::b }) {
+        Text(text = "Click to change state")
+    }
+    LandingScreen(state.value)
+}
+
+
+@Composable
+fun LandingScreen(value: () -> Unit) {
+    val currentOnTimeout by rememberUpdatedState(value)
+    LaunchedEffect(true) {
+        delay(5000)
+        currentOnTimeout()
+    }
+}
+
+//@Composable
+//fun CoroutineScopeComposable(){
+//    val counter = remember {
+//        mutableStateOf(0)
+//    }
+//    var scope = rememberCoroutineScope()
+//
+//    var text = "Counter is running ${counter.value}"
+//    if (counter.value==10){
+//        text = "Counter stopped"
+//    }
+//    Column {
+//        Text(text = text)
+//        Button(onClick = {
+//            scope.launch {
+//                Log.d("LaunchedEffectComposable", "Started...")
+//                try {
+//                    for (i in 1..10){
+//                        counter.value++
+//                        delay(1000)
+//                    }
+//                }catch (e:Exception){
+//                    Log.d("LaunchedEffectComposable", "Exception - ${e.message.toString()}")
+//                }
+//            }
+//        }) {
+//            Text(text = "Start")
+//        }
+//    }
+//}
+
+@Composable
+fun LaunchEffectComposable() {
     val counter = remember {
         mutableStateOf(0)
     }
     LaunchedEffect(key1 = Unit) {
         Log.d("LaunchedEffectComposable", "Started...")
         try {
-            for (i in 1..10){
+            for (i in 1..10) {
                 counter.value++
                 delay(1000)
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.d("LaunchedEffectComposable", "Exception - ${e.message.toString()}")
         }
     }
 
     var text = "Counter is running ${counter.value}"
-    if (counter.value==10){
+    if (counter.value == 10) {
         text = "Counter stopped"
     }
     Text(text = text)
