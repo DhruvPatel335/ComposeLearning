@@ -35,6 +35,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -77,33 +78,55 @@ class MainActivity : ComponentActivity() {
 //            LaunchEffectComposable()
 //            CoroutineScopeComposable()
 //            App()
-            Loader()
+//            Loader()
+            DerivedState()
         }
     }
 }
 
 @Composable
-fun Loader() {
-    val degree = produceState(initialValue = 0) {
-        while (true) {
-            delay(16)
-            value = (value + 10) % 360
+fun DerivedState() {
+    val tableOf = remember {
+        mutableStateOf(5)
+    }
+    val index = produceState(initialValue = 1) {
+        repeat(9) {
+            delay(1000)
+            value += 1
         }
     }
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize(1f), content = {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                imageVector = Icons.Default.Refresh,
-                contentDescription = "",
-                modifier = Modifier
-                    .size(60.dp)
-                    .rotate(degree.value.toFloat())
-            )
-            Text(text = "Loading")
-        }
-    })
+    val message =
+        derivedStateOf { "${tableOf.value} * ${index.value} = ${tableOf.value * index.value}" }
 
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize(1f)) {
+        Text(text = message.value, style = MaterialTheme.typography.titleLarge)
+    }
 }
+
+//@Composable
+//fun Loader() {
+//    val degree = produceState(initialValue = 0) {
+//        while (true) {
+//            delay(16)
+//            value = (value + 10) % 360
+//        }
+//    }
+//    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize(1f), content = {
+//        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//            Image(
+//                imageVector = Icons.Default.Refresh,
+//                contentDescription = "",
+//                modifier = Modifier
+//                    .size(60.dp)
+//                    .rotate(degree.value.toFloat())
+//            )
+//            Text(text = "Loading")
+//        }
+//    })
+//
+//}
+
+
 //@Composable
 //fun App(){
 //    KeyboardComposable()
